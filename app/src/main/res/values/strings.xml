@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MyTaxiTest</string>
+    <string name="mapbox_access_token" translatable="false">sk.eyJ1Ijoic2FsaWtoNDQ0IiwiYSI6ImNsNWh6dDhndDAzZHAzY2xncHZkdnBmZzYifQ.SHPl3YLp-K_e74yocudYPQ</string>
+
+</resources>
