@@ -44,7 +44,9 @@ class MapActivity : AppCompatActivity(R.layout.map_activity) {
     private val binding by viewBinding(MapActivityBinding::bind)
     private val viewModel: MapViewModel by viewModels<MapViewModelImpl>()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var zoom = 16.0
 
+    @SuppressLint("MissingPermission")
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +57,42 @@ class MapActivity : AppCompatActivity(R.layout.map_activity) {
             Style.MAPBOX_STREETS
         ) {
             moveToCurrentLocation()
+        }
+
+        binding.plus.setOnClickListener {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                location?.let { loc ->
+                    binding.mapView.getMapboxMap().flyTo(cameraOptions {
+                        center(Point.fromLngLat(loc.longitude, loc.latitude))
+                        zoom += 1
+                        zoom(zoom)
+                    }, mapAnimationOptions {
+                        duration(100)
+                    })
+                }
+            }
+        }
+
+        binding.myLocation.setOnClickListener {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                location?.let { loc ->
+                    binding.mapView.getMapboxMap().flyTo(cameraOptions {
+                        center(Point.fromLngLat(loc.longitude, loc.latitude))
+                        zoom(16.0)
+                    }, mapAnimationOptions {
+                        duration(4000)
+                    })
+                }
+            }
+        }
+
+        binding.minus.setOnClickListener {
+            binding.mapView.getMapboxMap().flyTo(cameraOptions {
+                zoom -= 1.0
+                zoom(zoom)
+            }, mapAnimationOptions {
+                duration(100)
+            })
         }
 
 
@@ -113,7 +151,7 @@ class MapActivity : AppCompatActivity(R.layout.map_activity) {
                 binding.mapView.getMapboxMap().flyTo(cameraOptions {
                     createMapMarker(location.toPoint())
                     center(Point.fromLngLat(loc.longitude, loc.latitude))
-                    zoom(16.0)
+                    zoom(zoom)
                 }, mapAnimationOptions {
                     duration(4000)
                 })
